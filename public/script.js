@@ -1,10 +1,14 @@
-const API_URL = "https://student-management-system-mlz1.onrender.com";
+const API_URL =
+"https://student-management-system-mlz1.onrender.com";
 
 // Load students
 async function getStudents() {
     try {
-        const response = await fetch(`${API_URL}/students`);
-        const students = await response.json();
+        const response =
+            await fetch(`${API_URL}/student`);
+
+        const students =
+            await response.json();
 
         let table = "";
 
@@ -17,8 +21,7 @@ async function getStudents() {
                 <td>${student.course}</td>
                 <td>${student.marks}</td>
                 <td>
-                    <button
-                    class="delete-btn"
+                    <button class="delete-btn"
                     onclick="deleteStudent(${student.id})">
                     Delete
                     </button>
@@ -27,19 +30,31 @@ async function getStudents() {
             `;
         });
 
-        document.getElementById("studentTable").innerHTML = table;
+        document.getElementById(
+            "studentTable"
+        ).innerHTML = table;
 
     } catch (error) {
-        console.log("Error loading students:", error);
+        console.log(
+            "Error loading students:",
+            error
+        );
     }
 }
 
 // Add student
 async function addStudent() {
-    const name = document.getElementById("name").value;
-    const age = document.getElementById("age").value;
-    const course = document.getElementById("course").value;
-    const marks = document.getElementById("marks").value;
+    const name =
+        document.getElementById("name").value;
+
+    const age =
+        document.getElementById("age").value;
+
+    const course =
+        document.getElementById("course").value;
+
+    const marks =
+        document.getElementById("marks").value;
 
     if (!name || !age || !course || !marks) {
         alert("Please fill all fields");
@@ -47,23 +62,29 @@ async function addStudent() {
     }
 
     try {
-        const response = await fetch(`${API_URL}/add-student`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name,
-                age,
-                course,
-                marks
-            })
-        });
+        const response =
+            await fetch(
+                `${API_URL}/add-student`,
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type":
+                        "application/json"
+                    },
+                    body: JSON.stringify({
+                        name,
+                        age,
+                        course,
+                        marks
+                    })
+                }
+            );
 
-        const result = await response.text();
+        const result =
+            await response.text();
+
         alert(result);
 
-        // Clear fields
         document.getElementById("name").value = "";
         document.getElementById("age").value = "";
         document.getElementById("course").value = "";
@@ -72,21 +93,30 @@ async function addStudent() {
         getStudents();
 
     } catch (error) {
-        console.log("Error adding student:", error);
+        console.log(
+            "Error adding student:",
+            error
+        );
     }
 }
 
 // Delete student
 async function deleteStudent(id) {
     try {
-        await fetch(`${API_URL}/delete-student/${id}`, {
-            method: "DELETE"
-        });
+        await fetch(
+            `${API_URL}/delete-student/${id}`,
+            {
+                method: "DELETE"
+            }
+        );
 
         getStudents();
 
     } catch (error) {
-        console.log("Error deleting student:", error);
+        console.log(
+            "Error deleting student:",
+            error
+        );
     }
 }
 
@@ -98,7 +128,9 @@ function searchStudent() {
         .toLowerCase();
 
     const rows =
-        document.querySelectorAll("#studentTable tr");
+        document.querySelectorAll(
+            "#studentTable tr"
+        );
 
     rows.forEach(row => {
         const name =
@@ -106,11 +138,10 @@ function searchStudent() {
             .textContent
             .toLowerCase();
 
-        if (name.includes(input)) {
-            row.style.display = "";
-        } else {
-            row.style.display = "none";
-        }
+        row.style.display =
+            name.includes(input)
+            ? ""
+            : "none";
     });
 }
 

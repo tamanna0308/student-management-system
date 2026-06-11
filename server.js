@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-// MySQL Connection Pool (Railway + Render)
+// MySQL Connection Pool
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -19,15 +19,36 @@ const db = mysql.createPool({
     port: process.env.DB_PORT,
     waitForConnections: true,
     connectionLimit: 10,
-    queueLimit: 0,
-    ssl: {
-        rejectUnauthorized: false
+    queueLimit: 0
+});
+
+// Test Database Connection
+db.getConnection((err, connection) => {
+    if (err) {
+        console.log("Database connection failed:", err);
+    } else {
+        console.log("Database connected successfully");
+        connection.release();
     }
 });
 
 // Home Route
 app.get("/", (req, res) => {
     res.send("Student Management System Running");
+});
+
+// Get All Students API
+app.get("/student", (req, res) => {
+    const sql = "SELECT * FROM student";
+
+    db.query(sql, (err, result) => {
+        if (err) {
+            console.log("Fetch student error:", err);
+            res.status(500).send("Error fetching students");
+        } else {
+            res.json(result);
+        }
+    });
 });
 
 // Add Student API
@@ -43,20 +64,6 @@ app.post("/add-student", (req, res) => {
             res.status(500).send("Error adding student");
         } else {
             res.send("Student added successfully");
-        }
-    });
-});
-
-// Get All Students API
-app.get("/student", (req, res) => {
-    const sql = "SELECT * FROM student";
-
-    db.query(sql, (err, result) => {
-        if (err) {
-            console.log("Fetch student error:", err);
-            res.status(500).send("Error fetching students");
-        } else {
-            res.json(result);
         }
     });
 });
