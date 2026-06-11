@@ -35,7 +35,7 @@ app.post("/add-student", (req, res) => {
     const { name, age, course, marks } = req.body;
 
     const sql =
-        "INSERT INTO students (name, age, course, marks) VALUES (?, ?, ?, ?)";
+        "INSERT INTO student (name, age, course, marks) VALUES (?, ?, ?, ?)";
 
     db.query(sql, [name, age, course, marks], (err, result) => {
         if (err) {
@@ -48,8 +48,8 @@ app.post("/add-student", (req, res) => {
 });
 
 // Get All Students API
-app.get("/students", (req, res) => {
-    const sql = "SELECT * FROM students";
+app.get("/student", (req, res) => {
+    const sql = "SELECT * FROM student";
 
     db.query(sql, (err, result) => {
         if (err) {
@@ -65,7 +65,7 @@ app.get("/students", (req, res) => {
 app.delete("/delete-student/:id", (req, res) => {
     const studentId = req.params.id;
 
-    const sql = "DELETE FROM students WHERE id = ?";
+    const sql = "DELETE FROM student WHERE id = ?";
 
     db.query(sql, [studentId], (err, result) => {
         if (err) {
@@ -83,7 +83,7 @@ app.put("/update-student/:id", (req, res) => {
     const { name, age, course, marks } = req.body;
 
     const sql =
-        "UPDATE students SET name=?, age=?, course=?, marks=? WHERE id=?";
+        "UPDATE student SET name=?, age=?, course=?, marks=? WHERE id=?";
 
     db.query(
         sql,
