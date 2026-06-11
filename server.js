@@ -1,14 +1,16 @@
+require("dotenv").config();
+
 const express = require("express");
 const mysql = require("mysql2");
 const cors = require("cors");
-require("dotenv").config();
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static("public"));
 
-// MySQL connection
+// MySQL Connection Pool (Railway + Render)
 const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
@@ -23,9 +25,7 @@ const db = mysql.createPool({
     }
 });
 
-;
-
-// Home route
+// Home Route
 app.get("/", (req, res) => {
     res.send("Student Management System Running");
 });
@@ -39,21 +39,22 @@ app.post("/add-student", (req, res) => {
 
     db.query(sql, [name, age, course, marks], (err, result) => {
         if (err) {
-            console.log(err);
-            res.send("Error adding student");
+            console.log("Add student error:", err);
+            res.status(500).send("Error adding student");
         } else {
             res.send("Student added successfully");
         }
     });
 });
-// View All Students API
+
+// Get All Students API
 app.get("/students", (req, res) => {
     const sql = "SELECT * FROM students";
 
     db.query(sql, (err, result) => {
         if (err) {
-            console.log(err);
-            res.send("Error fetching students");
+            console.log("Fetch student error:", err);
+            res.status(500).send("Error fetching students");
         } else {
             res.json(result);
         }
@@ -68,14 +69,13 @@ app.delete("/delete-student/:id", (req, res) => {
 
     db.query(sql, [studentId], (err, result) => {
         if (err) {
-            console.log(err);
-            res.send("Error deleting student");
+            console.log("Delete student error:", err);
+            res.status(500).send("Error deleting student");
         } else {
             res.send("Student deleted successfully");
         }
     });
 });
-
 
 // Update Student API
 app.put("/update-student/:id", (req, res) => {
@@ -90,15 +90,18 @@ app.put("/update-student/:id", (req, res) => {
         [name, age, course, marks, studentId],
         (err, result) => {
             if (err) {
-                console.log(err);
-                res.send("Error updating student");
+                console.log("Update student error:", err);
+                res.status(500).send("Error updating student");
             } else {
                 res.send("Student updated successfully");
             }
         }
     );
 });
-// Server start
-app.listen(5000, () => {
-    console.log("Server running on port 5000");
+
+// Server Start
+const PORT = process.env.PORT || 5000;
+
+app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
 });
