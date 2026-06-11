@@ -9,22 +9,21 @@ app.use(express.json());
 app.use(express.static("public"));
 
 // MySQL connection
-const db = mysql.createConnection({
+const db = mysql.createPool({
     host: process.env.DB_HOST,
     user: process.env.DB_USER,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_NAME,
-    port: process.env.DB_PORT
-});
-
-// Connect database
-db.connect((err) => {
-    if (err) {
-        console.log("Database connection failed");
-    } else {
-        console.log("Connected to MySQL");
+    port: process.env.DB_PORT,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0,
+    ssl: {
+        rejectUnauthorized: false
     }
 });
+
+;
 
 // Home route
 app.get("/", (req, res) => {
