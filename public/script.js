@@ -1,31 +1,37 @@
+const API_URL = "https://student-management-system-mlz1.onrender.com";
+
 // Load students
 async function getStudents() {
-    const response = await fetch("/students");
-    const students = await response.json();
+    try {
+        const response = await fetch(`${API_URL}/students`);
+        const students = await response.json();
 
-    let table = "";
+        let table = "";
 
-    students.forEach(student => {
-        table += `
-        <tr>
-            <td>${student.id}</td>
-            <td>${student.name}</td>
-            <td>${student.age}</td>
-            <td>${student.course}</td>
-            <td>${student.marks}</td>
-            <td>
-                <button
-class="delete-btn"
-onclick="deleteStudent(${student.id})">
-Delete
-</button>
-            </td>
-        </tr>
-        `;
-    });
+        students.forEach(student => {
+            table += `
+            <tr>
+                <td>${student.id}</td>
+                <td>${student.name}</td>
+                <td>${student.age}</td>
+                <td>${student.course}</td>
+                <td>${student.marks}</td>
+                <td>
+                    <button
+                    class="delete-btn"
+                    onclick="deleteStudent(${student.id})">
+                    Delete
+                    </button>
+                </td>
+            </tr>
+            `;
+        });
 
-    document.getElementById("studentTable").innerHTML =
-        table;
+        document.getElementById("studentTable").innerHTML = table;
+
+    } catch (error) {
+        console.log("Error loading students:", error);
+    }
 }
 
 // Add student
@@ -40,37 +46,50 @@ async function addStudent() {
         return;
     }
 
-    await fetch("/add-student", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json"
-        },
-        body: JSON.stringify({
-            name,
-            age,
-            course,
-            marks
-        })
-    });
+    try {
+        const response = await fetch(`${API_URL}/add-student`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name,
+                age,
+                course,
+                marks
+            })
+        });
 
-    document.getElementById("name").value = "";
-    document.getElementById("age").value = "";
-    document.getElementById("course").value = "";
-    document.getElementById("marks").value = "";
+        const result = await response.text();
+        alert(result);
 
-    getStudents();
+        // Clear fields
+        document.getElementById("name").value = "";
+        document.getElementById("age").value = "";
+        document.getElementById("course").value = "";
+        document.getElementById("marks").value = "";
+
+        getStudents();
+
+    } catch (error) {
+        console.log("Error adding student:", error);
+    }
 }
 
 // Delete student
 async function deleteStudent(id) {
-    await fetch(`/delete-student/${id}`, {
-        method: "DELETE"
-    });
+    try {
+        await fetch(`${API_URL}/delete-student/${id}`, {
+            method: "DELETE"
+        });
 
-    getStudents();
+        getStudents();
+
+    } catch (error) {
+        console.log("Error deleting student:", error);
+    }
 }
 
-getStudents();
 // Search student
 function searchStudent() {
     const input =
@@ -94,3 +113,5 @@ function searchStudent() {
         }
     });
 }
+
+getStudents();
